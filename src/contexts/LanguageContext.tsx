@@ -1,13 +1,16 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { LessonType, UserProgress } from "../types";
+import { LessonType, UserProgress, QuizType } from "../types";
 import { allLessons } from "../data/lessons";
+import { allQuizzes } from "../data/quizzes";
 import { toast } from "sonner";
 
 interface LanguageContextType {
   userProgress: UserProgress;
   lessons: LessonType[];
+  allQuizzes: QuizType[];
   completeLesson: (lessonId: string) => void;
+  completeQuiz: (quizId: string) => void;
   resetProgress: () => void;
   toggleLanguageDirection: () => void;
   addXp: (points: number) => void;
@@ -15,6 +18,7 @@ interface LanguageContextType {
 
 const defaultUserProgress: UserProgress = {
   completedLessons: [],
+  completedQuizzes: [],
   currentStreak: 0,
   totalXp: 0,
   languageDirection: "english-to-somali"
@@ -29,6 +33,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   });
   
   const [lessons, setLessons] = useState<LessonType[]>(allLessons);
+  const [quizzes, setQuizzes] = useState<QuizType[]>(allQuizzes);
 
   useEffect(() => {
     localStorage.setItem("userProgress", JSON.stringify(userProgress));
@@ -39,7 +44,14 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       complete: userProgress.completedLessons.includes(lesson.id)
     }));
     
+    // Update quizzes completed status
+    const updatedQuizzes = allQuizzes.map(quiz => ({
+      ...quiz,
+      complete: userProgress.completedQuizzes?.includes(quiz.id) || false
+    }));
+    
     setLessons(updatedLessons);
+    setQuizzes(updatedQuizzes);
   }, [userProgress]);
 
   const completeLesson = (lessonId: string) => {
@@ -52,6 +64,20 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       }));
       toast("Lesson completed! +10 XP", {
         description: "Keep up the great work!"
+      });
+    }
+  };
+
+  const completeQuiz = (quizId: string) => {
+    if (!userProgress.completedQuizzes?.includes(quizId)) {
+      setUserProgress(prev => ({
+        ...prev,
+        completedQuizzes: [...(prev.completedQuizzes || []), quizId],
+        totalXp: prev.totalXp + 20,
+        currentStreak: prev.currentStreak + 1
+      }));
+      toast("Quiz completed! +20 XP", {
+        description: "Excellent job!"
       });
     }
   };
@@ -92,7 +118,9 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       value={{ 
         userProgress, 
         lessons, 
-        completeLesson, 
+        allQuizzes: quizzes,
+        completeLesson,
+        completeQuiz,
         resetProgress,
         toggleLanguageDirection,
         addXp

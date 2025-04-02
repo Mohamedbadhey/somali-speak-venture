@@ -37,7 +37,7 @@ export interface QuizQuestion {
 
 export interface UserProgress {
   completedLessons: string[];
-  completedQuizzes?: string[];
+  completedQuizzes: string[];
   currentStreak: number;
   totalXp: number;
   languageDirection: 'english-to-somali' | 'somali-to-english';
