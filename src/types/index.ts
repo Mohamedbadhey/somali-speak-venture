@@ -28,11 +28,12 @@ export interface QuizType {
 
 export interface QuizQuestion {
   id: string;
-  type: 'matching' | 'multiple-choice';
+  type: 'matching' | 'multiple-choice' | 'sentence-construction' | 'translation';
   question: string;
   options?: string[];
   correctMatches?: { [key: string]: string };
   answer?: string;
+  translationPrompt?: string;
 }
 
 export interface UserProgress {
