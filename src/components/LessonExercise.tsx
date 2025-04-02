@@ -1,11 +1,10 @@
-
 import React, { useState } from "react";
 import { Exercise } from "@/types";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/components/ui/toast";
+import { useToast } from "@/hooks/use-toast";
 
 interface LessonExerciseProps {
   exercise: Exercise;
